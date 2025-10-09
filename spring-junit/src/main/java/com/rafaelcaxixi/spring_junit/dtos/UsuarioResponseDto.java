@@ -4,7 +4,8 @@ public record UsuarioResponseDto(
 
         Long id,
         String nome,
-        String email
+        String email,
+        Integer idade
 
 ) {
 }

@@ -7,6 +7,8 @@ public record UsuarioRequestDto(
         @NotBlank
         String nome,
         @NotBlank
-        String email
+        String email,
+        @NotNull
+        Integer idade
 ) {
 }

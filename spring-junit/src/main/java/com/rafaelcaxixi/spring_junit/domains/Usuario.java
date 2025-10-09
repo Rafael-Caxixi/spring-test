@@ -22,9 +22,12 @@ public class Usuario {
 
     private String email;
 
-    public Usuario(String nome, String email) {
+    private Integer idade;
+
+    public Usuario(String nome, String email, Integer idade) {
         this.nome = nome;
         this.email = email;
+        this.idade = idade;
     }
 
 }

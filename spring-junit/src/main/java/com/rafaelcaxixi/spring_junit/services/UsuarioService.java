@@ -5,6 +5,7 @@ import com.rafaelcaxixi.spring_junit.dtos.UsuarioRequestDto;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioResponseDto;
 import com.rafaelcaxixi.spring_junit.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +18,23 @@ public class UsuarioService {
 
     public UsuarioResponseDto cadastrarUsuario(UsuarioRequestDto dto) {
         try {
-            if (usuarioRepository.existsByEmail(dto.email())) {
-                throw new RuntimeException("Email já cadastrado");
+            if (existsByEmail(dto.email())) {
+                throw new DataIntegrityViolationException("Email já cadastrado");
             }
-            Usuario usuario = usuarioRepository.save(new Usuario(dto.nome(), dto.email()));
-            return new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail());
+            Usuario usuario = usuarioRepository.save(new Usuario(dto.nome(), dto.email(), dto.idade()));
+            return new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getIdade());
+        } catch (DataIntegrityViolationException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Erro ao cadastrar usuário: " + e.getMessage());
+        }
+    }
+
+    public boolean existsByEmail(String email) {
+        try {
+            return usuarioRepository.existsByEmail(email);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao verificar existência de email: " + e.getMessage());
         }
     }
 
@@ -31,7 +42,7 @@ public class UsuarioService {
         try{
         List<Usuario> usuarios = usuarioRepository.findAll();
         return usuarios.stream()
-                .map(usuario -> new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail()))
+                .map(usuario -> new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getIdade()))
                 .toList();
         }catch (Exception e){
             throw new RuntimeException("Erro ao listar usuários: " + e.getMessage());
@@ -42,7 +53,7 @@ public class UsuarioService {
         try{
             Usuario usuario = usuarioRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-            return new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail());
+            return new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getIdade());
         }catch (Exception e){
             throw new RuntimeException("Erro ao buscar usuário por ID: " + e.getMessage());
         }
@@ -55,7 +66,7 @@ public class UsuarioService {
             usuario.setNome(dto.nome());
             usuario.setEmail(dto.email());
             Usuario usuarioAtualizado = usuarioRepository.save(usuario);
-            return new UsuarioResponseDto(usuarioAtualizado.getId(), usuarioAtualizado.getNome(), usuarioAtualizado.getEmail());
+            return new UsuarioResponseDto(usuarioAtualizado.getId(), usuarioAtualizado.getNome(), usuarioAtualizado.getEmail(), usuario.getIdade());
         }catch (Exception e){
             throw new RuntimeException("Erro ao atualizar usuário: " + e.getMessage());
         }
