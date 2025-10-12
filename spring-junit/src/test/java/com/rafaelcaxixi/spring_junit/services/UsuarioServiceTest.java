@@ -3,6 +3,7 @@ package com.rafaelcaxixi.spring_junit.services;
 import com.rafaelcaxixi.spring_junit.domains.Usuario;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioRequestDto;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioResponseDto;
+import com.rafaelcaxixi.spring_junit.exceptions.ResourceNotFoundException;
 import com.rafaelcaxixi.spring_junit.repositories.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -83,14 +85,64 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void buscarUsuarioPorId() {
+    void buscarUsuarioPorIdComSucesso() {
+        //ARRANGE
+        Usuario usuario = new Usuario("Nome","email@gmail.com",20);
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+
+        //ACT
+        UsuarioResponseDto usuarioResponseDto = usuarioService.buscarUsuarioPorId(1L);
+
+        //ASSERT
+        assertNotNull(usuarioResponseDto);
+        assertEquals("email@gmail.com", usuarioResponseDto.email());
+        assertEquals(1L, usuarioResponseDto.id());
     }
 
     @Test
-    void atualizarUsuario() {
+    void buscarUsuarioPorIdComUsuarioInexistente() {
+        //ARRANGE
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //ACT
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> usuarioService.buscarUsuarioPorId(1L));
+
+        //ASSERT
+        assertEquals("Usuário não encontrado", exception.getMessage());
     }
 
     @Test
-    void deletarUsuario() {
+    void atualizarUsuarioComSucesso() {
+        //ARRANGE
+        Usuario usuario = new Usuario("Nome","email@gmail.com",20);
+        usuario.setId(1L);
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+
+        //ACT
+        usuarioService.atualizarUsuario(1L, usuarioRequestDto);
+
+        //ASSERT
+        then(usuarioRepository).should(times(1)).save(any(Usuario.class));
+        assertEquals("usuarioteste@gmail.com", usuario.getEmail());
+    }
+
+    @Test
+    void deletarUsuarioComSucesso() {
+        //ARRANGE
+        Usuario usuario = new Usuario("Nome","email@gmail.com",20);
+        usuario.setId(1L);
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        doNothing().when(usuarioRepository).delete(usuario);
+
+        //ACT
+        usuarioService.deletarUsuario(1L);
+
+        //ASSERT
+        verify(usuarioRepository,times(1)).delete(usuario);
     }
 }

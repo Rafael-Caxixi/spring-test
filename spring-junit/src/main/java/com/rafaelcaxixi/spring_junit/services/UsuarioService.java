@@ -3,6 +3,7 @@ package com.rafaelcaxixi.spring_junit.services;
 import com.rafaelcaxixi.spring_junit.domains.Usuario;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioRequestDto;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioResponseDto;
+import com.rafaelcaxixi.spring_junit.exceptions.ResourceNotFoundException;
 import com.rafaelcaxixi.spring_junit.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,48 +39,42 @@ public class UsuarioService {
         }
     }
 
-    public List<UsuarioResponseDto> listarUsuarios(){
-        try{
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        return usuarios.stream()
-                .map(usuario -> new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getIdade()))
-                .toList();
-        }catch (Exception e){
+    public List<UsuarioResponseDto> listarUsuarios() {
+        try {
+            List<Usuario> usuarios = usuarioRepository.findAll();
+            return usuarios.stream()
+                    .map(usuario -> new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getIdade()))
+                    .toList();
+        } catch (Exception e) {
             throw new RuntimeException("Erro ao listar usuários: " + e.getMessage());
         }
     }
 
-    public UsuarioResponseDto buscarUsuarioPorId(Long id){
-        try{
-            Usuario usuario = usuarioRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-            return new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getIdade());
-        }catch (Exception e){
-            throw new RuntimeException("Erro ao buscar usuário por ID: " + e.getMessage());
-        }
+    public UsuarioResponseDto buscarUsuarioPorId(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        return new UsuarioResponseDto(usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getIdade());
     }
 
-    public UsuarioResponseDto atualizarUsuario(Long id, UsuarioRequestDto dto){
-        try{
+
+    public UsuarioResponseDto atualizarUsuario(Long id, UsuarioRequestDto dto) {
+        try {
             Usuario usuario = usuarioRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
             usuario.setNome(dto.nome());
             usuario.setEmail(dto.email());
             Usuario usuarioAtualizado = usuarioRepository.save(usuario);
             return new UsuarioResponseDto(usuarioAtualizado.getId(), usuarioAtualizado.getNome(), usuarioAtualizado.getEmail(), usuario.getIdade());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Erro ao atualizar usuário: " + e.getMessage());
         }
     }
 
-    public void deletarUsuario(Long id){
-        try{
-            Usuario usuario = usuarioRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-            usuarioRepository.delete(usuario);
-        }catch (Exception e){
-            throw new RuntimeException("Erro ao deletar usuário: " + e.getMessage());
-        }
+    public void deletarUsuario(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        usuarioRepository.delete(usuario);
     }
 
 
