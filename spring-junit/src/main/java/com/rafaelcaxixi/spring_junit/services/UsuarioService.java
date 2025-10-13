@@ -64,6 +64,7 @@ public class UsuarioService {
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
             usuario.setNome(dto.nome());
             usuario.setEmail(dto.email());
+            usuario.setIdade(dto.idade());
             Usuario usuarioAtualizado = usuarioRepository.save(usuario);
             return new UsuarioResponseDto(usuarioAtualizado.getId(), usuarioAtualizado.getNome(), usuarioAtualizado.getEmail(), usuario.getIdade());
         } catch (Exception e) {

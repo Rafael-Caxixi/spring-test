@@ -3,6 +3,7 @@ package com.rafaelcaxixi.spring_junit.controllers;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioRequestDto;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioResponseDto;
 import com.rafaelcaxixi.spring_junit.services.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseEntity<UsuarioResponseDto> criarUsuario(@RequestBody UsuarioRequestDto dto) {
+    public ResponseEntity<UsuarioResponseDto> criarUsuario(@Valid @RequestBody UsuarioRequestDto dto) {
         UsuarioResponseDto usuarioResponseDto = usuarioService.cadastrarUsuario(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioResponseDto);
     }
@@ -35,7 +36,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDto> atualizarUsuario(@PathVariable Long id, @RequestBody UsuarioRequestDto dto) {
+    public ResponseEntity<UsuarioResponseDto> atualizarUsuario(@Valid @PathVariable Long id, @RequestBody UsuarioRequestDto dto) {
         UsuarioResponseDto usuarioResponseDto = usuarioService.atualizarUsuario(id, dto);
         return ResponseEntity.ok(usuarioResponseDto);
     }
