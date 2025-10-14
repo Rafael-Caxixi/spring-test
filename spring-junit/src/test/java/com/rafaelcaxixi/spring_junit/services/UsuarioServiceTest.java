@@ -3,7 +3,6 @@ package com.rafaelcaxixi.spring_junit.services;
 import com.rafaelcaxixi.spring_junit.domains.Usuario;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioRequestDto;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioResponseDto;
-import com.rafaelcaxixi.spring_junit.exceptions.ResourceNotFoundException;
 import com.rafaelcaxixi.spring_junit.repositories.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {

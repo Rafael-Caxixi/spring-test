@@ -6,28 +6,19 @@ import com.rafaelcaxixi.spring_junit.exceptions.ResourceNotFoundException;
 import com.rafaelcaxixi.spring_junit.services.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(UsuarioController.class)
 class UsuarioControllerTest {
@@ -45,7 +36,7 @@ class UsuarioControllerTest {
 
     @BeforeEach
     void setUp() {
-        usuarioRequestDto = new UsuarioRequestDto("Rafael Caxixi", "usuarioteste@gmail.com", 20);
+        usuarioRequestDto = new UsuarioRequestDto("Rafael Caxixi", "rafael@gmail.com", 20);
     }
 
     @Test
@@ -54,10 +45,18 @@ class UsuarioControllerTest {
         UsuarioResponseDto usuarioResponseDto = new UsuarioResponseDto(1L, "Rafael Caxixi", "rafael@gmail.com", 34);
         when(usuarioService.cadastrarUsuario(usuarioRequestDto)).thenReturn(usuarioResponseDto);
 
+        String jsonRequest = """
+        {
+            "nome": "Rafael Caxixi",
+            "email": "rafael@gmail.com",
+            "idade": 34
+        }
+        """;
+
         //ACT
         mockMvc.perform(post("/usuarios")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"nome\":\"Rafael Caxixi\",\"email\":\"usuarioteste@gmail.com\",\"idade\":20}"))
+                        .content(jsonRequest))
                 .andExpect(status().isCreated());
 
         //ASSERT
@@ -88,8 +87,7 @@ class UsuarioControllerTest {
 
         //ACT
         mockMvc.perform(get("/usuarios/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"nome\":\"Rafael Caxixi\",\"email\":\"usuarioteste@gmail.com\",\"idade\":20}"))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         //ASSERT
@@ -108,36 +106,38 @@ class UsuarioControllerTest {
         mockMvc.perform(get("/usuarios/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-
     }
 
     @Test
     void atualizarUsuarioComSucesso() throws Exception {
-        UsuarioResponseDto responseDTO = mock(UsuarioResponseDto.class);
+        //ARRANGE
+        UsuarioResponseDto usuarioResponseDto = new UsuarioResponseDto(1L, "Rafael Caxixi", "rafael@gmail.com", 34);
+        when(usuarioService.atualizarUsuario(1L,usuarioRequestDto)).thenReturn(usuarioResponseDto);
 
-        when(usuarioService.atualizarUsuario(1L,usuarioRequestDto)).thenReturn(responseDTO);
+        String jsonRequest = """
+        {
+            "nome": "Rafael Caxixi",
+            "email": "rafael@gmail.com",
+            "idade": 34
+        }
+        """;
 
-        ResponseEntity<UsuarioResponseDto> response = usuarioController.atualizarUsuario(1L, usuarioRequestDto);
+        //ACT + ASSERT
+        mockMvc.perform(put("/usuarios/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isOk());
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(responseDTO, response.getBody());
-//
-//        //ARRANGE
-//        UsuarioResponseDto usuarioResponseDto = new UsuarioResponseDto(1L, "Rafael Caxixi", "rafael@gmail.com", 34);
-//        when(usuarioService.atualizarUsuario(1L,usuarioRequestDto)).thenReturn(usuarioResponseDto);
-//
-//        //ACT
-//        mockMvc.perform(put("/usuarios/1")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(usuarioRequestDto.toString()))
-//                .andExpect(status().isOk());
-//
-//        assertNotNull(usuarioResponseDto);
-//        assertEquals(1L, usuarioResponseDto.id());
-//        assertEquals("usuarioteste@gmail.com", usuarioResponseDto.email());
     }
 
     @Test
-    void deletarUsuario() {
+    void deletarUsuarioComSucesso() throws Exception {
+        //ARRANGE
+        doNothing().when(usuarioService).deletarUsuario(1L);
+
+        //ACT + ASSERT
+        mockMvc.perform(delete("/usuarios/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 }
