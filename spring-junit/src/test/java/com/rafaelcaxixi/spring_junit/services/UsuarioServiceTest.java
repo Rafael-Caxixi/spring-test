@@ -40,10 +40,11 @@ class UsuarioServiceTest {
     @Test
     void cadastrarUsuarioComSucesso() {
         //ARRANGE
-        when(usuarioRepository.existsByEmail(usuarioRequestDto.email())).thenReturn(false);
         Usuario usuario = new Usuario("Rafael Caxixi","usuarioteste@gmail.com",20,"123456");
         usuario.setId(1L);
+        when(usuarioRepository.existsByLogin(usuarioRequestDto.login())).thenReturn(false);
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+
 
         //ACT
         UsuarioResponseDto usuarioResponseDto = usuarioService.cadastrarUsuario(usuarioRequestDto);
@@ -55,16 +56,16 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void cadastrarUsuarioComEmailExistente() {
+    void cadastrarUsuarioComLoginExistente() {
         //ARRANGE + ACT
-        when(usuarioRepository.existsByEmail(usuarioRequestDto.email())).thenReturn(true);
+        when(usuarioRepository.existsByLogin(usuarioRequestDto.login())).thenReturn(true);
         DataIntegrityViolationException exception = assertThrows(
                 DataIntegrityViolationException.class,
                 () -> usuarioService.cadastrarUsuario(usuarioRequestDto)
         );
 
         //ASSERT
-        assertEquals("Email já cadastrado", exception.getMessage());
+        assertEquals("Login já cadastrado", exception.getMessage());
     }
 
     @Test

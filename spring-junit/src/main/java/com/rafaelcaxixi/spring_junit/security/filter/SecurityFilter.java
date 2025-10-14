@@ -1,5 +1,6 @@
-package com.rafaelcaxixi.spring_junit.security;
+package com.rafaelcaxixi.spring_junit.security.filter;
 
+import com.rafaelcaxixi.spring_junit.security.handlers.CustomAuthenticationEntryPoint;
 import com.rafaelcaxixi.spring_junit.security.services.TokenService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;

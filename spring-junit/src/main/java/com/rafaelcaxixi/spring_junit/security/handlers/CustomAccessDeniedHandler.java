@@ -1,4 +1,4 @@
-package com.rafaelcaxixi.spring_junit.security;
+package com.rafaelcaxixi.spring_junit.security.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;

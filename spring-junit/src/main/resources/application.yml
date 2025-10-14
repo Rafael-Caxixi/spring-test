@@ -29,9 +29,3 @@ spring:
 jwt:
   secret: ${JWT_SECRET_KEY:minhaChaveUltraSecretaComMaisDe32Bytes}
   prazoExpiracao: ${JWT_EXPIRATION_TIME:3600000}
-
-meumenu:
-  admin:
-    login: ${DEFAULT_ADMIN_LOGIN:admin}
-    email: ${DEFAULT_ADMIN_EMAIL:admin@meumenu.com}
-    password: ${DEFAULT_ADMIN_PASSWORD:SenhaForte123!}

@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,13 +22,16 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UsuarioResponseDto cadastrarUsuario(UsuarioRequestDto dto) {
         try {
-            if (existsByEmail(dto.email())) {
-                throw new DataIntegrityViolationException("Email já cadastrado");
+            if (existsByLogin(dto.login())) {
+                throw new DataIntegrityViolationException("Login já cadastrado");
             }
-            Usuario usuario = usuarioRepository.save(new Usuario(dto.login(), dto.email(), dto.idade(), dto.senha()));
+            String senhaCriptografada = passwordEncoder.encode(dto.senha());
+
+            Usuario usuario = usuarioRepository.save(new Usuario(dto.login(), dto.email(), dto.idade(), senhaCriptografada));
             return new UsuarioResponseDto(usuario.getId(), usuario.getLogin(), usuario.getEmail(), usuario.getIdade());
         } catch (DataIntegrityViolationException e) {
             throw e;
@@ -36,11 +40,11 @@ public class UsuarioService {
         }
     }
 
-    public boolean existsByEmail(String email) {
+    public boolean existsByLogin(String login) {
         try {
-            return usuarioRepository.existsByEmail(email);
+            return usuarioRepository.existsByLogin(login);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao verificar existência de email: " + e.getMessage());
+            throw new RuntimeException("Erro ao verificar existência de login: " + e.getMessage());
         }
     }
 
@@ -83,8 +87,6 @@ public class UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
-    public LoginResponseDTO login(LoginRequestDTO){
 
-    }
 
 }

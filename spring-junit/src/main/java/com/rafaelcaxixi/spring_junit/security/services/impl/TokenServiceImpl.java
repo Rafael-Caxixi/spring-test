@@ -33,7 +33,7 @@ public class TokenServiceImpl implements com.rafaelcaxixi.spring_junit.security.
     public String generateToken(String login) {
         try {
             return Jwts.builder()
-                    .setIssuer("user-manager-api")
+                    .setIssuer("spring-junit")
                     .setSubject(login)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + prazoExpiracao))

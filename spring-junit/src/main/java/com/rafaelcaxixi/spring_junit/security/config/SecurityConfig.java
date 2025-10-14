@@ -1,6 +1,8 @@
-package com.rafaelcaxixi.spring_junit.security;
+package com.rafaelcaxixi.spring_junit.security.config;
 
-import com.rafaelcaxixi.spring_junit.security.SecurityFilter;
+import com.rafaelcaxixi.spring_junit.security.handlers.CustomAccessDeniedHandler;
+import com.rafaelcaxixi.spring_junit.security.handlers.CustomAuthenticationEntryPoint;
+import com.rafaelcaxixi.spring_junit.security.filter.SecurityFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,12 +35,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //VER DE COLOCAR .hasRole("CLIENTE") OU .hasRole("PROPRIETARIO") NOS ENDPOINTS
-        return http
+            return http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth").permitAll()
                                 //.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated()
                 )
