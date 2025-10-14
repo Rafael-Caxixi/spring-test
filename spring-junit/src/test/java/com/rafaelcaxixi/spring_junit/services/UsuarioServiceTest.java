@@ -33,7 +33,7 @@ class UsuarioServiceTest {
 
     @BeforeEach
     void setUp() {
-        usuarioRequestDto = new UsuarioRequestDto("Rafael Caxixi", "usuarioteste@gmail.com",20);
+        usuarioRequestDto = new UsuarioRequestDto("Rafael Caxixi", "usuarioteste@gmail.com",20,"123456");
     }
 
 
@@ -41,7 +41,7 @@ class UsuarioServiceTest {
     void cadastrarUsuarioComSucesso() {
         //ARRANGE
         when(usuarioRepository.existsByEmail(usuarioRequestDto.email())).thenReturn(false);
-        Usuario usuario = new Usuario("Rafael Caxixi","usuarioteste@gmail.com",20);
+        Usuario usuario = new Usuario("Rafael Caxixi","usuarioteste@gmail.com",20,"123456");
         usuario.setId(1L);
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
@@ -69,8 +69,8 @@ class UsuarioServiceTest {
 
     @Test
     void listarUsuariosSucesso() {
-        Usuario usuario1 = new Usuario("usuario1","usuario1@gmail.com",20);
-        Usuario usuario2 = new Usuario("usuario2","usuario2@gmail.com",20);
+        Usuario usuario1 = new Usuario("usuario1","usuario1@gmail.com",20,"123456");
+        Usuario usuario2 = new Usuario("usuario2","usuario2@gmail.com",20,"123456");
 
         when(usuarioRepository.findAll()).thenReturn(List.of(usuario1, usuario2));
 
@@ -85,7 +85,7 @@ class UsuarioServiceTest {
     @Test
     void buscarUsuarioPorIdComSucesso() {
         //ARRANGE
-        Usuario usuario = new Usuario("Nome","email@gmail.com",20);
+        Usuario usuario = new Usuario("Nome","email@gmail.com",20,"123456");
         usuario.setId(1L);
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
 
@@ -114,7 +114,7 @@ class UsuarioServiceTest {
     @Test
     void atualizarUsuarioComSucesso() {
         //ARRANGE
-        Usuario usuario = new Usuario("Nome","email@gmail.com",20);
+        Usuario usuario = new Usuario("Nome","email@gmail.com",20,"123456");
         usuario.setId(1L);
 
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
@@ -131,7 +131,7 @@ class UsuarioServiceTest {
     @Test
     void deletarUsuarioComSucesso() {
         //ARRANGE
-        Usuario usuario = new Usuario("Nome","email@gmail.com",20);
+        Usuario usuario = new Usuario("Nome","email@gmail.com",20,"123456");
         usuario.setId(1L);
 
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));

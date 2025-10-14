@@ -5,10 +5,12 @@ import jakarta.validation.constraints.NotNull;
 
 public record UsuarioRequestDto(
         @NotBlank
-        String nome,
+        String login,
         @NotBlank
         String email,
         @NotNull
-        Integer idade
+        Integer idade,
+        @NotBlank
+        String senha
 ) {
 }

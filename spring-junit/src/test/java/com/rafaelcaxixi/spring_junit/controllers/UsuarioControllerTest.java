@@ -3,31 +3,54 @@ package com.rafaelcaxixi.spring_junit.controllers;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioRequestDto;
 import com.rafaelcaxixi.spring_junit.dtos.UsuarioResponseDto;
 import com.rafaelcaxixi.spring_junit.exceptions.ResourceNotFoundException;
+import com.rafaelcaxixi.spring_junit.security.CustomAccessDeniedHandler;
+import com.rafaelcaxixi.spring_junit.security.CustomAuthenticationEntryPoint;
+import com.rafaelcaxixi.spring_junit.security.SecurityConfig;
+import com.rafaelcaxixi.spring_junit.security.SecurityFilter;
+import com.rafaelcaxixi.spring_junit.security.services.TokenService;
 import com.rafaelcaxixi.spring_junit.services.UsuarioService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UsuarioController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class UsuarioControllerTest {
-
-    @InjectMocks
-    private UsuarioController usuarioController;
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+    @MockBean
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @MockBean
+    private SecurityFilter securityFilter;
 
     @MockBean
     private UsuarioService usuarioService;
@@ -36,20 +59,23 @@ class UsuarioControllerTest {
 
     @BeforeEach
     void setUp() {
-        usuarioRequestDto = new UsuarioRequestDto("Rafael Caxixi", "rafael@gmail.com", 20);
+        usuarioRequestDto = new UsuarioRequestDto("Rafael Caxixi", "rafael@gmail.com", 20,"123456");
     }
+
 
     @Test
     void criarUsuarioComSucesso() throws Exception {
         //ARRANGE
         UsuarioResponseDto usuarioResponseDto = new UsuarioResponseDto(1L, "Rafael Caxixi", "rafael@gmail.com", 34);
-        when(usuarioService.cadastrarUsuario(usuarioRequestDto)).thenReturn(usuarioResponseDto);
+        when(usuarioService.cadastrarUsuario(any(UsuarioRequestDto.class))).thenReturn(usuarioResponseDto);
+
 
         String jsonRequest = """
         {
-            "nome": "Rafael Caxixi",
+            "login": "Rafael Caxixi",
             "email": "rafael@gmail.com",
-            "idade": 34
+            "idade": 34,
+            "senha": "123456"
         }
         """;
 
@@ -57,12 +83,16 @@ class UsuarioControllerTest {
         mockMvc.perform(post("/usuarios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.email").value("rafael@gmail.com"))
+                .andExpect(jsonPath("$.login").value("Rafael Caxixi"));
 
-        //ASSERT
-        assertNotNull(usuarioResponseDto);
-        assertEquals(1L, usuarioResponseDto.id());
-        assertEquals("rafael@gmail.com", usuarioResponseDto.email());
+//
+//        //ASSERT
+//        assertNotNull(usuarioResponseDto);
+//        assertEquals(1L, usuarioResponseDto.id());
+//        assertEquals("rafael@gmail.com", usuarioResponseDto.email());
     }
 
     @Test
@@ -116,9 +146,10 @@ class UsuarioControllerTest {
 
         String jsonRequest = """
         {
-            "nome": "Rafael Caxixi",
+            "login": "Rafael Caxixi",
             "email": "rafael@gmail.com",
-            "idade": 34
+            "idade": 34,
+            "senha": "123456"
         }
         """;
 
