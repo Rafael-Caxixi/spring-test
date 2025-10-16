@@ -39,6 +39,10 @@ public class Usuario implements UserDetails {
         this.senha = senha;
     }
 
+    public void atualizarSenha(String novaSenha) {
+        this.senha = novaSenha;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.getClass().getSimpleName().toUpperCase()));

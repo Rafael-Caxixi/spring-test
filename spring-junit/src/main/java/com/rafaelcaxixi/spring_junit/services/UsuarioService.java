@@ -9,6 +9,7 @@ import com.rafaelcaxixi.spring_junit.exceptions.ResourceNotFoundException;
 import com.rafaelcaxixi.spring_junit.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public UsuarioResponseDto cadastrarUsuario(UsuarioRequestDto dto) {
         try {
