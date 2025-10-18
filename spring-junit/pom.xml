@@ -80,7 +80,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- ✅ Testcontainers -->
+		<!--  Testcontainers -->
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
@@ -88,7 +88,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- ✅ Testcontainers - Banco de dados (exemplo: PostgreSQL) -->
+		<!--  Testcontainers - Banco de dados (exemplo: PostgreSQL) -->
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>postgresql</artifactId>
@@ -134,6 +134,13 @@
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
 			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!--   H2	-->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>

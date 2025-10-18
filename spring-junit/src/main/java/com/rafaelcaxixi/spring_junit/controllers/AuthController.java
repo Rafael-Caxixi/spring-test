@@ -11,17 +11,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-
     private final AuthService authService;
 
-    @PostMapping
-    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-        return ResponseEntity.ok(authService.login(loginRequestDTO));
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO dto) {
+        LoginResponseDTO token = authService.login(dto);
+        return ResponseEntity.ok(token);
     }
 
     @PutMapping("/atualizar-senha/{id}")

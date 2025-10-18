@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,9 @@ class UsuarioServiceTest {
 
     private UsuarioRequestDto usuarioRequestDto;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @BeforeEach
     void setUp() {
         usuarioRequestDto = new UsuarioRequestDto("Rafael Caxixi", "usuarioteste@gmail.com",20,"123456");
@@ -43,6 +47,9 @@ class UsuarioServiceTest {
         Usuario usuario = new Usuario("Rafael Caxixi","usuarioteste@gmail.com",20,"123456");
         usuario.setId(1L);
         when(usuarioRepository.existsByLogin(usuarioRequestDto.login())).thenReturn(false);
+
+        //senha criptografada
+        when(passwordEncoder.encode(usuarioRequestDto.senha())).thenReturn("\"$2a$10$Np/Qxq9.DRYWQeSgrKXkiKHCpihCjaMJsel2\"");
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
 
