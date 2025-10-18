@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+//@EnableMethodSecurity
 public class SecurityConfig {
 
     private final SecurityFilter securityFilter;
@@ -41,8 +41,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/auth").permitAll()
-                                //.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
